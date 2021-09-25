@@ -13,10 +13,10 @@ import (
 type Account string
 
 type Tx struct {
-	From Account `json:"from"`
-	To Account `json:"to"`
-	Value uint `json:"value"`
-	Data string `json:"data"`
+	From  Account `json:"from"`
+	To    Account `json:"to"`
+	Value uint    `json:"value"`
+	Data  string  `json:"data"`
 }
 
 func (t Tx) IsReward() bool {
@@ -24,15 +24,15 @@ func (t Tx) IsReward() bool {
 }
 
 type State struct {
-	Balances map[Account]uint `json:"balances"`
+	Balances  map[Account]uint `json:"balances"`
 	txMempool []Tx
 
 	dbFile *os.File
 }
 
 type Genesis struct {
-	Time time.Time `json:"genesis_time"`
-	ChainId string `json:"chain-id"`
+	Time     time.Time        `json:"genesis_time"`
+	ChainId  string           `json:"chain-id"`
 	Balances map[Account]uint `json:"balances"`
 }
 
@@ -100,8 +100,6 @@ func (s *State) Persist() error {
 	return nil
 }
 
-
-
 func NewStateFromDisk() (*State, error) {
 	// get current working directory
 	cwd, err := os.Getwd()
@@ -123,7 +121,7 @@ func NewStateFromDisk() (*State, error) {
 	}
 
 	txDbFilePath := filepath.Join(cwd, "database", "tx.db")
-	f, err := os.OpenFile(txDbFilePath, os.O_APPEND | os.O_RDWR, 0600)
+	f, err := os.OpenFile(txDbFilePath, os.O_APPEND|os.O_RDWR, 0600)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +135,7 @@ func NewStateFromDisk() (*State, error) {
 		}
 
 		// Convert JSON encoded TX into an object (struct)
-		var tx Tx 
+		var tx Tx
 		json.Unmarshal(scanner.Bytes(), &tx)
 
 		// Rebuild the state (user balances) as a series of events
@@ -149,23 +147,4 @@ func NewStateFromDisk() (*State, error) {
 
 	return state, nil
 
-}
-
-func ReadGenesis() error {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	genFilePath := filepath.Join(cwd, "database", "genesis.json")
-	
-	genesis, err := loadGenesis(genFilePath)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	fmt.Println("Successfully opend genesis file")
-	fmt.Println(genesis)
-
-	return nil
 }
