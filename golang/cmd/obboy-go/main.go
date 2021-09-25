@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kalam360/obboy-blockchain/database"
+	"github.com/kalam360/obboy-blockchain/golang/database"
 	"github.com/spf13/cobra"
 )
 
 func main() {
 	// create the cobra command
 	var obboyCmd = &cobra.Command{
-		Use:   "obboy",
+		Use:   "obboy-go",
 		Short: "Obboy Blockchain Cli",
 		// it will run the following function when called
 		Run: func(cmd *cobra.Command, args []string) {

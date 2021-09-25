@@ -1,4 +1,4 @@
-module github.com/kalam360/obboy-blockchain
+module github.com/kalam360/obboy-blockchain/golang
 
 go 1.16
 
