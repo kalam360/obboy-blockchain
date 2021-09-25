@@ -1,12 +1,12 @@
 # Implementing a blockchain with different languages
 
-## Golang
+## golang
 ## python
 ## javascript
 ## typescript
 
 # In Future
-## Rust
-## C++
-## Java
-## C#
+## rust
+## c++
+## java
+## c#
