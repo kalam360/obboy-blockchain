@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/kalam360/obboy-blockchain/database"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 		Short: "Obboy Blockchain Cli",
 		// it will run the following function when called
 		Run: func(cmd *cobra.Command, args []string) {
-
+			database.ReadGenesis()
 		},
 	}
 

@@ -1,0 +1,7 @@
+{
+    "genesis_time": "2021-09-23T00:00:00.000000000Z",
+    "chain-id": "obboy-blockchain",
+    "balances": {
+        "obboylabs": 1000000
+    }
+}

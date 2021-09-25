@@ -57,3 +57,8 @@ go install ./cmd/...
 ```
 
 
+## Blockchain is a database
+### Genesis File
+### State
+### Transactions
+
