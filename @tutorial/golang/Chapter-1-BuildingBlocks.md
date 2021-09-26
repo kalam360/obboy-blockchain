@@ -62,3 +62,6 @@ go install ./cmd/...
 ### State
 ### Transactions
 
+### Blocks are linked list
+
+
