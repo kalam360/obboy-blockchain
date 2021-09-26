@@ -4,5 +4,5 @@ If you want to change your career to Blockchain developement or pursue remote op
 ## Courses
 - **Introduction to Blockchain with Go, Python and Typescript(JavaScript)**
 - **Ethereum Protocol (Geth) Implementation with Go**
-- **Developing Smartcontracts and DApps - Ethereum Wallet Application**
+- **Developing Smartcontracts and DApps - Ethereum Wallet Application** 
 
