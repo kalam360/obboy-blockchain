@@ -1,39 +1,27 @@
 package database
 
 import (
-	"bufio"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"os"
-	"path/filepath"
-	"time"
+
+	"github.com/ethereum/go-ethereum/common"
 )
 
-type Account string
-
-type Tx struct {
-	From  Account `json:"from"`
-	To    Account `json:"to"`
-	Value uint    `json:"value"`
-	Data  string  `json:"data"`
-}
-
-func (t Tx) IsReward() bool {
-	return t.Data == "reward"
-}
-
-type State struct {
-	Balances  map[Account]uint `json:"balances"`
-	txMempool []Tx
-
-	dbFile *os.File
-}
+var genesisJson = `{
+	"genesis_time": "2020-06-01T00:00:00.000000000Z",
+	"chain_id": "obboy-blockchain-golang",
+	"symbol": "obboy",
+	"balances": {
+		"0x09eE50f2F37FcBA1845dE6FE5C762E83E65E755c": 1000000
+	},
+	"fork_tip_1": 35
+}`
 
 type Genesis struct {
-	Time     time.Time        `json:"genesis_time"`
-	ChainId  string           `json:"chain-id"`
-	Balances map[Account]uint `json:"balances"`
+	Balances map[common.Address]uint `json:"balances"`
+	Symbol   string
+
+	ForkTIP1 uint64 `json:"fork_tip_1"`
 }
 
 func loadGenesis(path string) (Genesis, error) {
@@ -43,108 +31,14 @@ func loadGenesis(path string) (Genesis, error) {
 	}
 
 	var loadedGenesis Genesis
-
 	err = json.Unmarshal(content, &loadedGenesis)
 	if err != nil {
 		return Genesis{}, err
 	}
 
 	return loadedGenesis, nil
-
 }
 
-func (s *State) apply(tx Tx) error {
-	if tx.IsReward() {
-		s.Balances[tx.To] += tx.Value
-		return nil
-	}
-
-	if tx.Value > s.Balances[tx.From] {
-		return fmt.Errorf("insufficient balance")
-	}
-
-	s.Balances[tx.From] -= tx.Value
-	s.Balances[tx.To] += tx.Value
-
-	return nil
-}
-
-func (s *State) Add(tx Tx) error {
-	if err := s.apply(tx); err != nil {
-		return err
-	}
-
-	s.txMempool = append(s.txMempool, tx)
-
-	return nil
-}
-
-func (s *State) Persist() error {
-	// make a copy of the mempool as it will be modified
-	mempool := make([]Tx, len(s.txMempool))
-	copy(mempool, s.txMempool)
-
-	for i := 0; i < len(mempool); i++ {
-		txJson, err := json.Marshal(mempool[i])
-		if err != nil {
-			return err
-		}
-
-		if _, err = s.dbFile.Write(append(txJson, '\n')); err != nil {
-			return err
-		}
-
-		s.txMempool = s.txMempool[1:]
-	}
-
-	return nil
-}
-
-func NewStateFromDisk() (*State, error) {
-	// get current working directory
-	cwd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	genFilePath := filepath.Join(cwd, "database", "genesis.json")
-
-	gen, err := loadGenesis(genFilePath)
-	if err != nil {
-		return nil, err
-	}
-
-	balances := make(map[Account]uint)
-
-	for account, balance := range gen.Balances {
-		balances[account] = balance
-	}
-
-	txDbFilePath := filepath.Join(cwd, "database", "tx.db")
-	f, err := os.OpenFile(txDbFilePath, os.O_APPEND|os.O_RDWR, 0600)
-	if err != nil {
-		return nil, err
-	}
-
-	scanner := bufio.NewScanner(f)
-	state := &State{balances, make([]Tx, 0), f}
-
-	for scanner.Scan() {
-		if err := scanner.Err(); err != nil {
-			return nil, err
-		}
-
-		// Convert JSON encoded TX into an object (struct)
-		var tx Tx
-		json.Unmarshal(scanner.Bytes(), &tx)
-
-		// Rebuild the state (user balances) as a series of events
-		if err := state.apply(tx); err != nil {
-			return nil, err
-		}
-
-	}
-
-	return state, nil
-
+func writeGenesisToDisk(path string, genesis []byte) error {
+	return ioutil.WriteFile(path, genesis, 0644)
 }

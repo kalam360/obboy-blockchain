@@ -1,4 +1,3 @@
-from os import stat
 import sys
 from typing import Optional
 

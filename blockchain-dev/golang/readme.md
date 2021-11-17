@@ -2,6 +2,12 @@
 
 ## Blockchain from scratch
 The project will be a commandline tools to deploy and interact with blockchain. We will develop the blockchain with Golang. Command line will use `cobra` library. 
+
+### Code will be followed from:
+- initial database setup
+- Commandline tools
+- to use command line additional modules
+
 ### Step 1
 - Create the main function for the commandline tool usin `cobra` library
 
